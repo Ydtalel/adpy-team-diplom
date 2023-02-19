@@ -1,0 +1,16 @@
+
+.vs/
+x64/
+out/
+env/
+.vscode/
+*__pycache__
+*.bak
+*.vcxproj.filters
+*.user
+*.shlak
+*.csv
+*.idea
+*.log
+*.token
+*.pytest_cache
