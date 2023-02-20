@@ -19,11 +19,6 @@ def send_some_ms(user_id, message_text, keyboard):
                                         'keyboard': keyboard.get_keyboard()})
 
 
-
-
-
-
-
 def bot_valera():
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
@@ -38,16 +33,22 @@ def bot_valera():
                 # вызываем фун с инфой по пользователю
                 user_info = get_user_info(user_id)
                 # записываем его в бд
-                dbmanager.AddUser(user_id, user_info['city'], user_info['age_to'], user_info['sex'])
+                dbmanager.AddUser(str(user_id),
+                                  'Еще не сделали имя',
+                                  user_info['age_to'],
+                                  user_info['sex'],
+                                  user_info['city'])
                 # отпровляем пользователю подходящую пару
-                couple_url = f'https://vk.com/id{users_search()[1]}'
+                couple_url = f'https://vk.com/id{users_search()[0]}'
                 send_some_ms(user_id, couple_url, keyboard)
             elif msg == 'добавить в избранное':
                 # тут используем метод класса бд
-                send_some_ms(user_id, 'метод класса бд', keyboard)
+                dbmanager.AddUserFavorites(user_id, users_search()[0])
+                send_some_ms(user_id, 'Добавил в избранное', keyboard)
             elif msg == 'список избранного':
                 # тут используем метод бд с запросом к бд
-                send_some_ms(user_id, 'метод бд с запросом к бд', keyboard)
+                dbmanager.GetUserFavorites(user_id)
+                send_some_ms(user_id, 'Пользователи добавленные в избранное', keyboard)
             else:
                 send_some_ms(user_id, 'Я тебя не понимаю попробуй кнопки', keyboard)
 
