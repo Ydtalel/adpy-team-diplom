@@ -3,8 +3,9 @@ from dotenv import load_dotenv
 import os
 from pprint import pprint
 import time
+from Bot_Valera.conf import token
 
-token = 'vk1.a.K25g9hQS_PWH_JRxa5GYQcvKNeStyV9SJFB8tQRstsB2N_NT7jWZMJtQUNQaS4elZGD_HmbzFB_-tFidloId9gFZg21XdV0Dn-L0a8gPAVhMih3HFiuoBKuZBo5JZk7ybkzezrV15ulLRjXnb70CT59miY5cpbYZiVlTpcXayNL1nxLWz1HGOz1JHAeSNKhq1UtEqarFqQVu0O0bZo1BgA'
+token = token
 
 
 load_dotenv()  # take environment variables from .env.
