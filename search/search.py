@@ -4,8 +4,11 @@ import os
 from pprint import pprint
 import time
 
+token = 'vk1.a.K25g9hQS_PWH_JRxa5GYQcvKNeStyV9SJFB8tQRstsB2N_NT7jWZMJtQUNQaS4elZGD_HmbzFB_-tFidloId9gFZg21XdV0Dn-L0a8gPAVhMih3HFiuoBKuZBo5JZk7ybkzezrV15ulLRjXnb70CT59miY5cpbYZiVlTpcXayNL1nxLWz1HGOz1JHAeSNKhq1UtEqarFqQVu0O0bZo1BgA'
+
+
 load_dotenv()  # take environment variables from .env.
-token = os.getenv('token')
+token_ = os.getenv('token')
 api = vk.API(access_token=token, v=5.131)
 
 
@@ -49,20 +52,20 @@ def get_all_user_photo(id_):
         dict_[largest['url']] = str(photo['likes']['count'])
     sorted_tuples = sorted(dict_.items(), key=lambda item: item[1])[-3:]
     return {k: v for k, v in sorted_tuples}.keys()
+#
+#
+# def get_data_opposite_sex(list_of_users_id):
+#     for user in list_of_users_id:
+#         user_info = api.users.get(user_ids=user, fields='id, first_name, last_name')
+#         hrefs = get_all_user_photo(user)
+#         print(f"{user_info[0]['first_name']} {user_info[0]['last_name']} ссылка на профиль"
+#               f" https://vk.com/id{str(user_info[0]['id'])}\n{hrefs}")
+#         time.sleep(4)
 
 
-def get_data_opposite_sex(list_of_users_id):
-    for user in list_of_users_id:
-        user_info = api.users.get(user_ids=user, fields='id, first_name, last_name')
-        hrefs = get_all_user_photo(user)
-        print(f"{user_info[0]['first_name']} {user_info[0]['last_name']} ссылка на профиль"
-              f" https://vk.com/id{str(user_info[0]['id'])}\n{hrefs}")
-        time.sleep(4)
-
-
-# для парня находим дувушек из того же города примерного возраста со статусом в поиске, с открытым профилем и фото
+# # для парня находим дувушек из того же города примерного возраста со статусом в поиске, с открытым профилем и фото
 params = get_user_info(922473)
-get_data_opposite_sex(users_search())
+# get_data_opposite_sex(users_search())
 
 
 
