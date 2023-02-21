@@ -3,9 +3,9 @@ import vk
 # import os
 import random
 from datetime import date
-from Bot_Valera.conf import token
-
-token = token
+# from Bot_Valera.conf import token_1
+#
+# token = token_1
 
 
 ## это не удаляем
@@ -20,7 +20,7 @@ class Vkinder:
 
     def get_user_info(self, id_):
         user_info = self.api.users.get(user_ids=id_, fields='id, first_name, last_name, bdate, city, sex')
-        age = int(date.today().year) - int(user_info[0]['bdate'].split('.')[2])
+        #age = int(date.today().year) - int(user_info[0]['bdate'].split('.')[2])
         sex = user_info[0]['sex']
         city_id = user_info[0]['city']['id']
         fname = user_info[0]['first_name']
@@ -28,7 +28,7 @@ class Vkinder:
         Vkinder.about_user_dict = {
             'vk_id': id_,
             'name': f"{fname} {lname}",
-            'age': age,
+            'age': 30,
             'sex': sex,
             'city': city_id
         }
@@ -71,11 +71,12 @@ class Vkinder:
         return {
             'name': f"{user_info[0]['first_name']} {user_info[0]['last_name']}",
             'link': f"https://vk.com/id{str(user_info[0]['id'])}",
-            'photo': hrefs
+            'photo': hrefs,
+            'vk_id': str(user_info[0]['id'])
         }
 
 
 # vkinder = Vkinder(vk.API(access_token=token, v=5.131))
-
+#
 # print(vkinder.get_user_info(922473))
 # print(vkinder.users_search())
