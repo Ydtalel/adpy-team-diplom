@@ -1,16 +1,17 @@
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
-from conf import access_token
+from conf import access_token, token_1
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from DBManager.DBManager import DBManager
-from search.search import get_user_info, users_search, get_all_user_photo, find_largest_photo
+from search.search import Vkinder
+import vk
 
 
 vk_session = vk_api.VkApi(token=access_token)
 session_api = vk_session.get_api()
 longpoll = VkLongPoll(vk_session)
 dbmanager = DBManager("vkbot_db")
-
+vkinder = Vkinder(vk.API(access_token=token_1, v=5.131))
 
 def send_some_ms(user_id, message_text, keyboard):
     vk_session.method('messages.send', {'user_id': user_id,
@@ -31,19 +32,31 @@ def bot_valera():
             keyboard.add_button('список избранного', VkKeyboardColor.PRIMARY)
             if msg == 'next':
                 # вызываем фун с инфой по пользователю
-                user_info = get_user_info(user_id)
+                user_info = vkinder.get_user_info(user_id)
                 # записываем его в бд
                 dbmanager.AddUser(str(user_id),
-                                  'Еще не сделали имя',
-                                  user_info['age_to'],
+                                  user_info['name'],
+                                  30,
                                   user_info['sex'],
                                   user_info['city'])
                 # отпровляем пользователю подходящую пару
-                couple_url = f'https://vk.com/id{users_search()[0]}'
-                send_some_ms(user_id, couple_url, keyboard)
+                couple_url = vkinder.users_search()
+                sr = f'{couple_url["name"]}\n' \
+                     f'{couple_url["link"]}\n' \
+                     f'{couple_url["photo"]}'
+                send_some_ms(user_id, sr, keyboard)
             elif msg == 'добавить в избранное':
                 # тут используем метод класса бд
-                dbmanager.AddUserFavorites(user_id, users_search()[0])
+                candidate_vk_id = couple_url["vk_id"]
+                candidate_info = vkinder.get_user_info(candidate_vk_id)
+                dbmanager.AddUser(str(candidate_vk_id),
+                                  candidate_info['name'],
+                                  30,
+                                  candidate_info['sex'],
+                                  candidate_info['city'])
+                candidate_db = dbmanager.GetUserByVkID(str(candidate_vk_id))
+                dbmanager.AddUserFavorites(user_id, int(candidate_db["user_id"]))
+
                 send_some_ms(user_id, 'Добавил в избранное', keyboard)
             elif msg == 'список избранного':
                 # тут используем метод бд с запросом к бд
