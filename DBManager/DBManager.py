@@ -74,3 +74,6 @@ class DBManager:
         for x in x_ret.all():
             ret_list.append(x.user_fav_id)
         return ret_list
+
+if __name__ == "__main__":
+    pass
