@@ -1,10 +1,7 @@
-
 from random import randrange
 from DBManager.DBManager import DBManager
 
-
 if __name__ == "__main__":
-
     db = DBManager("vkbot_db")
     x = db.AddUser("eezz" + str(randrange(100)), "vasya", age=23, gender=1, city=1)
     print("AddUser", x)
@@ -16,6 +13,3 @@ if __name__ == "__main__":
     print("GetUserByVkID", x)
     x = db.GetUserFavorites(1)
     print("GetUserFavorites", x)
-    
-
-
