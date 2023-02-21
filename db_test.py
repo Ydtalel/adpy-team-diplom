@@ -13,3 +13,5 @@ if __name__ == "__main__":
     print("GetUserByVkID", x)
     x = db.GetUserFavorites(1)
     print("GetUserFavorites", x)
+
+# git test 221
