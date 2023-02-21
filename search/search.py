@@ -72,7 +72,7 @@ class Vkinder:
             'name': f"{user_info[0]['first_name']} {user_info[0]['last_name']}",
             'link': f"https://vk.com/id{str(user_info[0]['id'])}",
             'photo': hrefs,
-            'vk_id': (user_info[0]['id'])
+            'vk_id': str(user_info[0]['id'])
         }
 
 

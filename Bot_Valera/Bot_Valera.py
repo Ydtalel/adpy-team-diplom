@@ -13,38 +13,47 @@ longpoll = VkLongPoll(vk_session)
 dbmanager = DBManager("vkbot_db")
 vkinder = Vkinder(vk.API(access_token=token_1, v=5.131))
 
-def send_some_ms(user_id, message_text, keyboard):
-    vk_session.method('messages.send', {'user_id': user_id,
+def send_some_ms(vk_user_id, message_text, keyboard):
+    vk_session.method('messages.send', {'user_id': vk_user_id,
                                         'message': message_text,
                                         'random_id': 0,
                                         'keyboard': keyboard.get_keyboard()})
+
+
 
 
 def bot_valera():
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
             msg = event.text.lower()
-            user_id = event.user_id
+            vk_user_id = event.user_id
             keyboard = VkKeyboard()
-            keyboard.add_button('добавить в избранное', VkKeyboardColor.PRIMARY)
+            keyboard_start = VkKeyboard(one_time=True)
+            keyboard_start.add_button('start', VkKeyboardColor.PRIMARY)
+            #keyboard.add_line()
             keyboard.add_button('next', VkKeyboardColor.POSITIVE)
             keyboard.add_line()
+            keyboard.add_button('добавить в избранное', VkKeyboardColor.PRIMARY)
             keyboard.add_button('список избранного', VkKeyboardColor.PRIMARY)
-            if msg == 'next':
-                # вызываем фун с инфой по пользователю
-                user_info = vkinder.get_user_info(user_id)
-                # записываем его в бд
-                dbmanager.AddUser(str(user_id),
+
+            if msg == 'start':
+                user_info = vkinder.get_user_info(vk_user_id)
+                dbmanager.AddUser(str(vk_user_id),
                                   user_info['name'],
                                   30,
                                   user_info['sex'],
-                                  user_info['city'])
+                                  user_info['city']
+                                  )
+                send_some_ms(vk_user_id,
+                             'Привет! Я бот Валера, и я готов помочь вам найти свою вторую половинку. Жми next и начнем!',
+                             keyboard)
+            elif msg == 'next':
                 # отпровляем пользователю подходящую пару
                 couple_url = vkinder.users_search()
                 sr = f'{couple_url["name"]}\n' \
                      f'{couple_url["link"]}\n' \
                      f'{couple_url["photo"]}'
-                send_some_ms(user_id, sr, keyboard)
+                send_some_ms(vk_user_id, sr, keyboard)
             elif msg == 'добавить в избранное':
                 # тут используем метод класса бд
                 candidate_vk_id = couple_url["vk_id"]
@@ -54,16 +63,19 @@ def bot_valera():
                                   30,
                                   candidate_info['sex'],
                                   candidate_info['city'])
-                candidate_db = dbmanager.GetUserByVkID(str(candidate_vk_id))
-                dbmanager.AddUserFavorites(user_id, int(candidate_db["user_id"]))
-
-                send_some_ms(user_id, 'Добавил в избранное', keyboard)
+                candidate_db = dbmanager.GetUserByVkID(candidate_vk_id)
+                x = candidate_db['user_id']
+                get_user = dbmanager.GetUserByVkID(str(vk_user_id))
+                dbmanager.AddUserFavorites(get_user["user_id"], x)
+                send_some_ms(vk_user_id, 'jr', keyboard)
             elif msg == 'список избранного':
                 # тут используем метод бд с запросом к бд
-                dbmanager.GetUserFavorites(user_id)
-                send_some_ms(user_id, 'Пользователи добавленные в избранное', keyboard)
+                get_user = dbmanager.GetUserByVkID(str(vk_user_id))
+                y = dbmanager.GetUserFavorites(get_user["user_id"])
+                for i in y:
+                    send_some_ms(vk_user_id, i, keyboard)
             else:
-                send_some_ms(user_id, 'Я тебя не понимаю попробуй кнопки', keyboard)
+                send_some_ms(vk_user_id, 'Нажми старт что бы начать', keyboard_start)
 
 
 
