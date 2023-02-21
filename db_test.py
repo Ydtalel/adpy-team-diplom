@@ -14,4 +14,17 @@ if __name__ == "__main__":
     print(x)
     
 # git ?
+=======
+    x = db.AddUser("eezz" + str(randrange(100)), "vasya", age=23, gender=1, city=1)
+    print("AddUser", x)
+    x = db.AddUserFavorites(1, 3)
+    print("AddUserFavorites", x)
+    x = db.GetUserByID(1)
+    print("GetUserByID", x)
+    x = db.GetUserByVkID("eezz11")
+    print("GetUserByVkID", x)
+    x = db.GetUserFavorites(1)
+    print("GetUserFavorites", x)
+>>>>>>> db_correct_dev_branch_test
 
+# git test 221
