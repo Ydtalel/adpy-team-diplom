@@ -35,7 +35,6 @@ def bot_valera():
             keyboard.add_line()
             keyboard.add_button('добавить в избранное', VkKeyboardColor.PRIMARY)
             keyboard.add_button('список избранного', VkKeyboardColor.PRIMARY)
-
             if msg == 'start':
                 user_info = vkinder.get_user_info(vk_user_id)
                 dbmanager.AddUser(str(vk_user_id),
@@ -67,13 +66,16 @@ def bot_valera():
                 x = candidate_db['user_id']
                 get_user = dbmanager.GetUserByVkID(str(vk_user_id))
                 dbmanager.AddUserFavorites(get_user["user_id"], x)
-                send_some_ms(vk_user_id, 'jr', keyboard)
+                answer = f'{candidate_info["name"]} добавлен(а) в ваш список избранного.\n' \
+                         f'Продолжим ? '
+                send_some_ms(vk_user_id, '', keyboard)
             elif msg == 'список избранного':
                 # тут используем метод бд с запросом к бд
                 get_user = dbmanager.GetUserByVkID(str(vk_user_id))
                 y = dbmanager.GetUserFavorites(get_user["user_id"])
                 for i in y:
-                    send_some_ms(vk_user_id, i, keyboard)
+                    f_u_vk_id = dbmanager.GetUserByID(i)
+                    send_some_ms(vk_user_id, f_u_vk_id["user_vk_id"], keyboard)
             else:
                 send_some_ms(vk_user_id, 'Нажми старт что бы начать', keyboard_start)
 
