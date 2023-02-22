@@ -1,12 +1,11 @@
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
-from conf import access_token, token_1
+from conf import access_token, token_1, tok
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from DBManager.DBManager import DBManager
 from search.search import Vkinder
 import vk
 
-tok = 'vk1.a.k_akibI69TIl9WC_ETMaUb53N6j9haRFaxyrvlA1AX5W2ltvoXcpq56dzG-sz6qr4IXw86LvPpN9MkxED0XxWB7fcHms_358uP9vJUqGQFA1YbC1ylEZX6xa0LH30lU_Rh27hzeS1C5JYepUWP8khpqAbyueChaGW9z1EaSpQCFWWiJqUv9a6z0aR5oxwHtQ1vSN0Zrc5rfgzalL2ehyjg'
 vk_session = vk_api.VkApi(token=tok)
 session_api = vk_session.get_api()
 longpoll = VkLongPoll(vk_session)
@@ -38,11 +37,18 @@ def bot_valera():
             keyboard.add_line()
             #keyboard.add_button('добавить в избранное', VkKeyboardColor.PRIMARY)
             keyboard.add_button('список избранного', VkKeyboardColor.PRIMARY)
+
+            keyboard_2 = VkKeyboard()
+            keyboard_2.add_button('next', VkKeyboardColor.POSITIVE)
+            keyboard_2.add_line()
+            keyboard_2.add_button('добавить в избранное', VkKeyboardColor.PRIMARY)
+            keyboard_2.add_line()
+            keyboard_2.add_button('список избранного', VkKeyboardColor.PRIMARY)
             if msg == 'start':
                 user_info = vkinder.get_user_info(vk_user_id)
                 dbmanager.AddUser(str(vk_user_id),
                                   user_info['name'],
-                                  30,
+                                  user_info['age'],
                                   user_info['sex'],
                                   user_info['city']
                                   )
@@ -51,10 +57,7 @@ def bot_valera():
                              'Жми next и начнем!',
                              keyboard)
             elif msg == 'next':
-                keyboard_2 = VkKeyboard()
-                keyboard_2.add_button('добавить в избранное', VkKeyboardColor.PRIMARY)
-                keyboard.add_line()
-                keyboard_2.add_button('next', VkKeyboardColor.POSITIVE)
+                vkinder.get_user_info(vk_user_id)
                 couple_url = vkinder.users_search()
                 info_fav = vkinder.get_user_info(couple_url['vk_id'])
                 favorit_name_link = f'{couple_url["name"]}\n' \
@@ -69,7 +72,7 @@ def bot_valera():
                 candidate_info = vkinder.get_user_info(candidate_vk_id)
                 dbmanager.AddUser(str(candidate_vk_id),
                                   candidate_info['name'],
-                                  30,
+                                  candidate_info['age'],
                                   candidate_info['sex'],
                                   candidate_info['city'])
                 candidate_db = dbmanager.GetUserByVkID(str(candidate_vk_id))
