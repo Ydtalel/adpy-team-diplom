@@ -13,17 +13,19 @@ longpoll = VkLongPoll(vk_session)
 dbmanager = DBManager("vkbot_db")
 vkinder = Vkinder(vk.API(access_token=token_1, v=5.131))
 
-def send_some_ms(vk_user_id, message_text, keyboard):
+def send_some_ms(vk_user_id, message_text, keyboard, attachment=None):
     vk_session.method('messages.send', {'user_id': vk_user_id,
                                         'message': message_text,
                                         'random_id': 0,
                                         'keyboard': keyboard.get_keyboard(),
+                                        'attachment': attachment
                                         })
 
 
 
 
 def bot_valera():
+    candidat_list = []
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
             msg = event.text.lower()
@@ -53,21 +55,24 @@ def bot_valera():
                 keyboard_2.add_button('добавить в избранное', VkKeyboardColor.PRIMARY)
                 keyboard.add_line()
                 keyboard_2.add_button('next', VkKeyboardColor.POSITIVE)
-                vk_user_id = event.user_id
                 couple_url = vkinder.users_search()
-                sr = f'{couple_url["name"]}\n' \
-                     f'{couple_url["link"]}\n' \
-                     f'{couple_url["photo"]}'
-                send_some_ms(vk_user_id, sr, keyboard_2)
+                info_fav = vkinder.get_user_info(couple_url['vk_id'])
+                favorit_name_link = f'{couple_url["name"]}\n' \
+                                    f'{couple_url["link"]}\n'
+                send_some_ms(vk_user_id, favorit_name_link, keyboard_2)
+                candidat_list.append(couple_url['vk_id'])
+                for i in info_fav["photo_links"]:
+                    attachment = f'photo{couple_url["vk_id"]}_{i}'
+                    send_some_ms(vk_user_id, 'favorit_name_link', keyboard_2, attachment)
             elif msg == 'добавить в избранное':
-                candidate_vk_id = couple_url["vk_id"]
+                candidate_vk_id = couple_url['vk_id']
                 candidate_info = vkinder.get_user_info(candidate_vk_id)
                 dbmanager.AddUser(str(candidate_vk_id),
                                   candidate_info['name'],
                                   30,
                                   candidate_info['sex'],
                                   candidate_info['city'])
-                candidate_db = dbmanager.GetUserByVkID(candidate_vk_id)
+                candidate_db = dbmanager.GetUserByVkID(str(candidate_vk_id))
                 x = candidate_db['user_id']
                 get_user = dbmanager.GetUserByVkID(str(vk_user_id))
                 dbmanager.AddUserFavorites(get_user["user_id"], x)
