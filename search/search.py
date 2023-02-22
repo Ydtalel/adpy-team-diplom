@@ -3,14 +3,19 @@ import vk
 # import os
 import random
 from datetime import date
+
+# import time
 # from Bot_Valera.conf import token_1
-#
+
 # token = token_1
 
 
 ## это не удаляем
 # load_dotenv()  # take environment variables from .env.
 # token = os.getenv('token')
+# bot_token = os.getenv('bot_token')
+# bd_password = os.getenv('bd_password ')
+
 
 class Vkinder:
     about_user_dict = {}
@@ -20,17 +25,25 @@ class Vkinder:
 
     def get_user_info(self, id_):
         user_info = self.api.users.get(user_ids=id_, fields='id, first_name, last_name, bdate, city, sex')
-        #age = int(date.today().year) - int(user_info[0]['bdate'].split('.')[2])
+        try:
+            age = int(date.today().year) - int(user_info[0]['bdate'].split('.')[2])
+        except IndexError:
+            age = 25
         sex = user_info[0]['sex']
-        city_id = user_info[0]['city']['id']
+        try:
+            city_id = user_info[0]['city']['id']
+        except KeyError:
+            city_id = 1
         fname = user_info[0]['first_name']
         lname = user_info[0]['last_name']
+        photo_id = self._get_top3_photo(id_)
         Vkinder.about_user_dict = {
             'vk_id': id_,
             'name': f"{fname} {lname}",
-            'age': 30,
+            'age': age,
             'sex': sex,
-            'city': city_id
+            'city': city_id,
+            'photo_links': photo_id
         }
         return self.about_user_dict
 
@@ -47,9 +60,9 @@ class Vkinder:
         for photo in all_photos['items']:
             sizes = photo['sizes']
             largest = max(sizes, key=self._find_largest_photo)
-            dict_[largest['url']] = str(photo['likes']['count'])
+            dict_[str(photo['id'])] = largest['url']
         sorted_tuples = sorted(dict_.items(), key=lambda item: item[1])[-3:]
-        return {k: v for k, v in sorted_tuples}.keys()
+        return [id_ for id_ in {k: v for k, v in sorted_tuples}.keys()]
 
     def users_search(self):
         params = self.about_user_dict.copy()
@@ -67,16 +80,26 @@ class Vkinder:
         id_list = [user['id'] for user in users_search['items'] if not user['is_closed']]
         rand_user = random.choice(id_list)
         user_info = self.api.users.get(user_ids=rand_user, fields='id, first_name, last_name')
-        hrefs = self._get_top3_photo(rand_user)
+        photo_id = self._get_top3_photo(rand_user)
         return {
             'name': f"{user_info[0]['first_name']} {user_info[0]['last_name']}",
-            'link': f"https://vk.com/id{str(user_info[0]['id'])}",
-            'photo': hrefs,
-            'vk_id': str(user_info[0]['id'])
+            'link': f"https://vk.com/id{str(rand_user)}",
+            'photo': photo_id,
+            'vk_id': rand_user
         }
+
+    # def get_favorits(self,favorits_vk_id):
+    #     for favorit in favorits_vk_id:
+    #         yield self.get_user_info(favorit)
+    #
 
 
 # vkinder = Vkinder(vk.API(access_token=token, v=5.131))
-#
-# print(vkinder.get_user_info(922473))
+
+# vkinder.get_user_info(397000519)
 # print(vkinder.users_search())
+
+# # lis = vkinder.users_search()
+# # for fav in vkinder.get_favorits(lis):
+# #     print(fav)
+# #     time.sleep(3.01)
