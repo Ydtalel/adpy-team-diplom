@@ -1,6 +1,6 @@
 import vk
-# from dotenv import load_dotenv
-# import os
+from dotenv import load_dotenv
+import os
 import random
 from datetime import date
 
@@ -11,10 +11,10 @@ from datetime import date
 
 
 ## это не удаляем
-# load_dotenv()  # take environment variables from .env.
-# token = os.getenv('token')
-# bot_token = os.getenv('bot_token')
-# bd_password = os.getenv('bd_password ')
+load_dotenv()  # take environment variables from .env.
+token = os.getenv('token')
+bot_token = os.getenv('bot_token')
+bd_password = os.getenv('bd_password ')
 
 
 class Vkinder:
@@ -88,18 +88,18 @@ class Vkinder:
             'vk_id': rand_user
         }
 
-    # def get_favorits(self,favorits_vk_id):
-    #     for favorit in favorits_vk_id:
-    #         yield self.get_user_info(favorit)
-    #
+    def get_favorites(self, favorits_vk_id):
+        favorites = self.api.users.get(user_ids=f'{",".join(favorits_vk_id)}', fields='first_name, last_name, id')
+        fav_list = {}
+        for fav in favorites:
+            id_ = fav['id']
+            fav_list[f"https://vk.com/id{id_}"] = f"{fav['first_name']} {fav['last_name']}"
+        return fav_list
 
 
-# vkinder = Vkinder(vk.API(access_token=token, v=5.131))
+vkinder = Vkinder(vk.API(access_token=token, v=5.131))
 
 # vkinder.get_user_info(397000519)
 # print(vkinder.users_search())
-
-# # lis = vkinder.users_search()
-# # for fav in vkinder.get_favorits(lis):
-# #     print(fav)
-# #     time.sleep(3.01)
+# ls = ['71902612', '452461439', '184822954', '452565279']
+# print(vkinder.get_favorites(ls))
