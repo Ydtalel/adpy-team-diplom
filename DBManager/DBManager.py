@@ -1,10 +1,11 @@
 
-import sqlalchemy as sa
-from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+# import sqlalchemy as sa
+# from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
-from DBManager.DeclarativeBase import DeclarativeBase
+# from DBManager.DeclarativeBase import DeclarativeBase
 from DBManager.TableClasses.Users import User
 from DBManager.TableClasses.Favorites import Favorite
+from DBManager.TableClasses.UsersViewsPast import UsersViewPast
 
 from DBManager.SessionMakerClass import SessionMakerClass
 from DBManager.DBMCells.AddUser import AddUserClass
@@ -25,5 +26,5 @@ class DBManager():
     AddUserFavorites = AddUserFavoritesClass.AddUserFavorites
     GetUserByID = GetUserByIDClass.GetUserByID
     GetUserByVkID = GetUserByVkIDClass.GetUserByVkID
-    GetUserFavorites = GetUserFavoritesClass.GetUserFavorites
+    GetUserFavoritesVkIDList = GetUserFavoritesClass.GetUserFavoritesVkIDList
     

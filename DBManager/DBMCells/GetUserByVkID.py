@@ -14,5 +14,5 @@ class GetUserByVkIDClass():
         Return Dictionary, not empty if successfull."""
         x_ret = self._session.query(User).where(User.user_vk_id == vk_id)
         for x in x_ret.all():
-            return {"user_id" : x.user_id, "name" : x.name, "age" : x.age, "gender" : x.gender}
+            return {"name" : x.name, "age" : x.age, "gender" : x.gender, "city" : x.city, "vk_id" : x.user_vk_id, "user_id" : x.user_id}
         return {}
