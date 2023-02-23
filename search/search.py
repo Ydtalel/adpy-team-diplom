@@ -3,15 +3,14 @@ from dotenv import load_dotenv
 import os
 import random
 from datetime import date
-# from DBManager.DBManager import DBManager
+from DBManager.DBManager import DBManager
 
 # import time
 # from Bot_Valera.conf import token_1
 
 # token = token_1
 
-# db_manager = DBManager(db_name='vkinder', db_protocol="postgresql", user_name="postgres", user_password="yu14r06iy90",
-#                        host="localhost", port="5432")
+
 # GetUserFavoritesVkIDList вернет di favorites
 # AddViewPastVkID     - это добавить вк айди в список пользователи по юзер айди
 # в список просмотренных
@@ -23,6 +22,8 @@ load_dotenv()  # take environment variables from .env.
 token = os.getenv('token')
 bot_token = os.getenv('bot_token')
 bd_password = os.getenv('bd_password ')
+db_manager = DBManager(db_name='vkinder', db_protocol="postgresql", user_name="postgres", user_password=bd_password,
+                       host="localhost", port="5432")
 
 
 class Vkinder:
@@ -81,10 +82,28 @@ class Vkinder:
         return [id_ for id_ in {k: v for k, v in sorted_tuples}.keys()]
 
     def users_search(self):
+
+        # user_id = db_manager.GetUserByVkID(str(self.about_user_dict['vk_id']))
+        # vk_id_list = db_manager.GetViewPastVkIDList(user_id['user_id'])
+
         next_user = random.choice(self.candidate_list)
         del self.candidate_list[self.candidate_list.index(next_user)]
+        # chat_user_id = db_manager.GetUserByVkID(str(self.about_user_dict['vk_id'])) # 2
+
+        # vk_id_list = db_manager.GetViewPastVkIDList(chat_user_id['user_id'])
+        # print(len(self.candidate_list))
+        # # next_user = self.candidate_list.pop(0)
+        # del self.candidate_list[self.candidate_list.index(next_user)]
+        #
+        # for candidate in self.candidate_list:
+        #     if candidate not in vk_id_list:
+        #         next_user = candidate
+        #         break
+        #     else:
+        #         del self.candidate_list[self.candidate_list.index(candidate)]
         user_info = self.api.users.get(user_ids=next_user, fields='id, first_name, last_name')
         photo_id = self._get_top3_photo(next_user)
+        # db_manager.AddViewPastVkID(chat_user_id, str(next_user))
         return {
             'name': f"{user_info[0]['first_name']} {user_info[0]['last_name']}",
             'link': f"https://vk.com/id{str(next_user)}",
