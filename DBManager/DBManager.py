@@ -16,6 +16,8 @@ from DBManager.DBMCells.GetUserFavorites import GetUserFavoritesClass
 from DBManager.DBMCells.AddViewPastVkID import AddViewPastVkIDClass
 from DBManager.DBMCells.GetViewPastVkID import GetViewPastVkIDClass
 
+# TODO Complex requests to database
+
 class DBManager():
 
     def __init__(self, db_name : str, user_name : str, user_password : str, db_protocol : str = "postgresql", host : str = "localhost", port : str = "5432") -> None:
