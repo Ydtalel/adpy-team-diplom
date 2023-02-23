@@ -3,10 +3,10 @@ from DBManager.DBManager import DBManager
 
 
 def DbTest():
-    db = DBManager("vkbot_db")
+    db = DBManager(db_name="vkbot_db", user_name="postgres", user_password="111")
     x = db.GetUserByVkID("ee3")
     print(x)
-    x = db.AddUser("eezz" + str(randrange(100)), "vasya", age=23, gender=1, city=1)
+    x = db.AddUser(vk_id="eezz" + str(randrange(100)), name="vasya", age=23, gender=1, city=1)
     print("AddUser", x)
     x = db.AddUserFavorites(1, 3)
     print("AddUserFavorites", x)
