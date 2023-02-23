@@ -1,10 +1,8 @@
-
 from random import randrange
 from DBManager.DBManager import DBManager
 
 
-if __name__ == "__main__":
-
+def DbTest():
     db = DBManager("vkbot_db")
     x = db.GetUserByVkID("ee3")
     print(x)
@@ -19,4 +17,4 @@ if __name__ == "__main__":
     x = db.GetUserFavorites(1)
     print("GetUserFavorites", x)
 
-# git test 235
+
