@@ -9,7 +9,8 @@ from DBManager.TableClasses.Favorites import Favorite
 
 class DBManager:
 
-    def __init__(self, db_name : str, db_protocol : str = "postgresql", user_name : str = "postgres", user_password : str = "wifi1993+", host : str = "localhost", port : str = "5432") -> None:
+    def __init__(self, db_name: str, user_name: str, user_password: str, db_protocol: str = "postgresql",
+                 host: str = "localhost", port: str = "5432") -> None:
         self.__DSN = F"{db_protocol}://{user_name}:{user_password}@{host}:{port}/{db_name}"
         self.__engine = sa.create_engine(self.__DSN)
         DeclarativeBase.Base.metadata.create_all(self.__engine)
