@@ -19,10 +19,10 @@ def DbTest():
     x = db.AddUserFavorites(1, 4)
     print("AddUserFavorites", x)
 
-    x = db.GetUserFavoritesVkIDList("eezz23")
+    x = db.GetUserFavoritesVkIDList("eezz12")
     print("GetUserFavorites", x)
 
-    x = db.AddViewPastVkID(1, "Pstvk_id1")
+    x = db.AddViewPastVkID(1, "Pstvk_id2")
     print("AddViewPastVkID", x)
 
     x = db.GetViewPastVkIDList(1)
