@@ -9,7 +9,7 @@ class AddViewPastVkIDClass():
         self._session = sessionmaker()()
 
     def AddViewPastVkID(self, user_id : int, past_vk_id : str) -> bool:
-        """Add past viewed user to blakc list by VK_ID\n
+        """Add past viewed user to black list by VK_ID\n
         Return True if successfull."""
         if len(self._session.query(User).where(User.user_id == user_id).all()) < 1:
             return False
