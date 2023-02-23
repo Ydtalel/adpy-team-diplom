@@ -9,7 +9,7 @@ import vk
 vk_session = vk_api.VkApi(token=tok)
 session_api = vk_session.get_api()
 longpoll = VkLongPoll(vk_session)
-dbmanager = DBManager("vkbot_db")
+dbmanager = DBManager("vkbot_db", 'postgres', 'wifi1993+')
 vkinder = Vkinder(vk.API(access_token=token_1, v=5.131))
 
 def send_some_ms(vk_user_id, message_text, keyboard, attachment=None):
@@ -32,12 +32,9 @@ def bot_valera():
             keyboard = VkKeyboard()
             keyboard_start = VkKeyboard(one_time=True)
             keyboard_start.add_button('start', VkKeyboardColor.PRIMARY)
-            #keyboard.add_line()
             keyboard.add_button('next', VkKeyboardColor.POSITIVE)
             keyboard.add_line()
-            #keyboard.add_button('добавить в избранное', VkKeyboardColor.PRIMARY)
             keyboard.add_button('список избранного', VkKeyboardColor.PRIMARY)
-
             keyboard_2 = VkKeyboard()
             keyboard_2.add_button('next', VkKeyboardColor.POSITIVE)
             keyboard_2.add_line()
@@ -85,14 +82,14 @@ def bot_valera():
             elif msg == 'список избранного':
                 # тут используем метод бд с запросом к бд
                 get_user = dbmanager.GetUserByVkID(str(vk_user_id))
-                y = dbmanager.GetUserFavorites(get_user["user_id"])
+                y = dbmanager.GetUserFavoritesVkIDList(str(vk_user_id))
                 for i in y:
-                    f_u_vk_id = dbmanager.GetUserByID(i)
-                    answer = f'{f_u_vk_id["name"]}\nhttps://vk.com/id{f_u_vk_id["user_vk_id"]}'
-                    send_some_ms(vk_user_id, answer, keyboard)
+                    f_u_vk_id = dbmanager.GetUserByVkID(str(i))
+                    answe_2 = f'{f_u_vk_id["name"]}\nhttps://vk.com/id{f_u_vk_id["vk_id"]}'
+                    send_some_ms(vk_user_id, answe_2, keyboard)
             else:
                 send_some_ms(vk_user_id, 'Нажми старт что бы начать', keyboard_start)
 
 
 
-bot_valera()
+#bot_valera()
