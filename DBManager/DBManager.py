@@ -13,7 +13,8 @@ from DBManager.DBMCells.AddUserFavorites import AddUserFavoritesClass
 from DBManager.DBMCells.GetUserByID import GetUserByIDClass
 from DBManager.DBMCells.GetUserByVkID import GetUserByVkIDClass
 from DBManager.DBMCells.GetUserFavorites import GetUserFavoritesClass
-
+from DBManager.DBMCells.AddViewPastVkID import AddViewPastVkIDClass
+from DBManager.DBMCells.GetViewPastVkID import GetViewPastVkIDClass
 
 class DBManager():
 
@@ -27,4 +28,6 @@ class DBManager():
     GetUserByID = GetUserByIDClass.GetUserByID
     GetUserByVkID = GetUserByVkIDClass.GetUserByVkID
     GetUserFavoritesVkIDList = GetUserFavoritesClass.GetUserFavoritesVkIDList
+    AddViewPastVkID = AddViewPastVkIDClass.AddViewPastVkID
+    GetViewPastVkIDList = GetViewPastVkIDClass.GetViewPastVkIDList
     
