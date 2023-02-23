@@ -5,8 +5,8 @@ from DBManager.TableClasses.UsersViewsPast import *
 
 class GetViewPastVkIDClass():
 
-    def __init__(self):
-        self._session = sessionmaker()()
+    def __init__(self, session):
+        self._session = session
 
     def GetViewPastVkIDList(self, user_id : int) -> list:
         """Get PAST views of specified user_id NOT vk_id\n

@@ -6,8 +6,8 @@ from DBManager.TableClasses.Favorites import *
 
 class GetUserFavoritesClass():
 
-    def __init__(self):
-        self._session = sessionmaker()()
+    def __init__(self, session):
+        self._session = session
 
     def GetUserFavoritesVkIDList(self, vk_id : str):
         """Get user favorites users id's LIST by user_id in database\n

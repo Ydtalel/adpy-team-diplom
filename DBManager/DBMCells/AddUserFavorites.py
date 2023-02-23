@@ -6,8 +6,8 @@ from DBManager.TableClasses.Favorites import *
 
 class AddUserFavoritesClass():
 
-    def __init__(self):
-        self._session = sessionmaker()()
+    def __init__(self, session):
+        self._session = session
 
     def AddUserFavorites(self, user_id : int, fav_id : int) -> bool:
         """Adding favorited user to a user_id. All parameters are obligatory\n

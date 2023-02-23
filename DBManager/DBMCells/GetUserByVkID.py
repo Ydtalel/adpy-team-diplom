@@ -6,8 +6,8 @@ from DBManager.TableClasses.Favorites import *
 
 class GetUserByVkIDClass():
 
-    def __init__(self):
-        self._session = sessionmaker()()
+    def __init__(self, session):
+        self._session = session
 
     def GetUserByVkID(self, vk_id : str) -> dict:
         """Get user by VK_ID in database\n

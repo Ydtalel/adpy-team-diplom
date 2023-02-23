@@ -5,8 +5,8 @@ from DBManager.TableClasses.Users import *
 
 class AddUserClass():
 
-    def __init__(self):
-        self._session = sessionmaker()() # beauty requires sacrifice
+    def __init__(self, session):
+        self._session = session
 
     def AddUser(self, vk_id: str, name: str, age: int, gender: int, city : int) -> bool:
         """Adding user to database. All parameters are obligatory\n

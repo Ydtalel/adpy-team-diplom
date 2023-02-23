@@ -5,8 +5,8 @@ from DBManager.TableClasses.UsersViewsPast import *
 
 class AddViewPastVkIDClass():
 
-    def __init__(self):
-        self._session = sessionmaker()()
+    def __init__(self, session):
+        self._session = session
 
     def AddViewPastVkID(self, user_id : int, past_vk_id : str) -> bool:
         """Add past viewed user to black list by VK_ID\n

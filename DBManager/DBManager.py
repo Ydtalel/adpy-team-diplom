@@ -24,12 +24,12 @@ class DBManager():
 
         self._session_obj = SessionMakerClass(db_name, user_name, user_password, db_protocol, host, port)
         self._session = self._session_obj.GetSession()
-    
-    AddUser = AddUserClass.AddUser
-    AddUserFavorites = AddUserFavoritesClass.AddUserFavorites
-    GetUserByID = GetUserByIDClass.GetUserByID
-    GetUserByVkID = GetUserByVkIDClass.GetUserByVkID
-    GetUserFavoritesVkIDList = GetUserFavoritesClass.GetUserFavoritesVkIDList
-    AddViewPastVkID = AddViewPastVkIDClass.AddViewPastVkID
-    GetViewPastVkIDList = GetViewPastVkIDClass.GetViewPastVkIDList
+
+        self.AddUser = AddUserClass(self._session).AddUser
+        self.AddUserFavorites = AddUserFavoritesClass(self._session).AddUserFavorites
+        self.GetUserByID = GetUserByIDClass(self._session).GetUserByID
+        self.GetUserByVkID = GetUserByVkIDClass(self._session).GetUserByVkID
+        self.GetUserFavoritesVkIDList = GetUserFavoritesClass(self._session).GetUserFavoritesVkIDList
+        self.AddViewPastVkID = AddViewPastVkIDClass(self._session).AddViewPastVkID
+        self.GetViewPastVkIDList = GetViewPastVkIDClass(self._session).GetViewPastVkIDList
     
