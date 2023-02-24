@@ -10,7 +10,7 @@ class GetUserFavoritesClass():
         self._session = session
 
     def GetUserFavoritesVkIDList(self, vk_id : str):
-        """Get user favorites users id's LIST by user_id in database\n
+        """Get user favorites users id's LIST by vk_id in database\n
         Return LIST, not empty if successfull."""
         ret_list = list()
         try:
@@ -18,6 +18,10 @@ class GetUserFavoritesClass():
         except:
             return ret_list
         favorite_ids = self._session.query(Favorite).where(Favorite.user_id == user_id)
+
+        # favorite_ids2 = self._session.query(Favorite).filter(Favorite.user_id == user_id).subquery("fav_ids")
+        # favorite_ids3 = self._session.query(User).filter(User.user_id == favorite_ids2.c.user_fav_id)
+
         for x in favorite_ids.all():
             ret_list.append(self._session.query(User.user_vk_id).where(User.user_id == x.user_fav_id).all()[0][0])
         return ret_list
