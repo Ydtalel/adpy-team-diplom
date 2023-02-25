@@ -1,17 +1,10 @@
-from dotenv import load_dotenv
-import os
 import random
 from datetime import date
 from DBManager.DBManager import DBManager
+from Bot_Valera.configurations import token_group, access_token, Db_password
 
-db_manager = DBManager(db_name='vkinder', db_protocol="postgresql", user_name="postgres", user_password="yu14r06iy90",
-                       host="localhost", port="5432")
 
-## это не удаляем
-load_dotenv()  # take environment variables from .env.
-token = os.getenv('token')
-bot_token = os.getenv('bot_token')
-bd_password = os.getenv('bd_password ')
+db_manager = DBManager("vkbot_db", 'postgres', Db_password)
 
 
 class Vkinder:
@@ -19,7 +12,7 @@ class Vkinder:
     def __init__(self, api):
         self.about_user_dict = {}
         self.api = api
-        self.candidate_list = ['452461439']
+        self.candidate_list = []
 
     def get_user_info(self, id_, flag=False):
         user_info = self.api.users.get(user_ids=id_, fields='id, first_name, last_name, bdate, city, sex')
@@ -86,12 +79,4 @@ class Vkinder:
             'link': f"https://vk.com/id{str(next_user)}",
             'photo': photo_id,
             'vk_id': next_user
-        }
-
-    def get_favorites(self, favorits_vk_id):
-        favorites = self.api.users.get(user_ids=f'{",".join(favorits_vk_id)}', fields='first_name, last_name, id')
-        fav_list = {}
-        for fav in favorites:
-            id_ = fav['id']
-            fav_list[f"https://vk.com/id{id_}"] = f"{fav['first_name']} {fav['last_name']}"
-        return fav_list
+                }

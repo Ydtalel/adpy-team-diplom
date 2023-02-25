@@ -1,21 +1,17 @@
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
-# from conf import access_token, token_1
-from search.search import token, bot_token
+from Bot_Valera.configurations import token_group, access_token, Db_password
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from DBManager.DBManager import DBManager
 from search.search import Vkinder
 import vk
 
-# vk_session = vk_api.VkApi(token=tok)
-vk_session = vk_api.VkApi(token=bot_token)
+
+vk_session = vk_api.VkApi(token=token_group)
 session_api = vk_session.get_api()
 longpoll = VkLongPoll(vk_session)
-# dbmanager = DBManager("vkbot_db")
-dbmanager = DBManager(db_name='vkinder', db_protocol="postgresql", user_name="postgres",
-                      user_password="yu14r06iy90", host="localhost", port="5432")
-# vkinder = Vkinder(vk.API(access_token=token_1, v=5.131))
-vkinder = Vkinder(vk.API(access_token=token, v=5.131))
+dbmanager = DBManager("vkbot_db", 'postgres', Db_password)
+vkinder = Vkinder(vk.API(access_token=access_token, v=5.131))
 
 
 def send_some_ms(vk_user_id, message_text, keyboard, attachment=None):
@@ -36,12 +32,9 @@ def bot_valera():
             keyboard = VkKeyboard()
             keyboard_start = VkKeyboard(one_time=True)
             keyboard_start.add_button('start', VkKeyboardColor.PRIMARY)
-            # keyboard.add_line()
             keyboard.add_button('next', VkKeyboardColor.POSITIVE)
             keyboard.add_line()
-            # keyboard.add_button('добавить в избранное', VkKeyboardColor.PRIMARY)
             keyboard.add_button('список избранного', VkKeyboardColor.PRIMARY)
-
             keyboard_2 = VkKeyboard()
             keyboard_2.add_button('next', VkKeyboardColor.POSITIVE)
             keyboard_2.add_line()
@@ -64,9 +57,7 @@ def bot_valera():
                 vkinder.get_user_info(vk_user_id)
                 couple_url = vkinder.users_search()
                 chat_user_db_id = dbmanager.GetUserByVkID(str(vk_user_id))["user_id"]
-                if len(candidat_list) > 0:
-                    dbmanager.AddViewPastVkID(user_id=chat_user_db_id, past_vk_id=str(couple_url['vk_id']))
-
+                dbmanager.AddViewPastVkID(user_id=chat_user_db_id, past_vk_id=str(couple_url['vk_id']))
                 info_fav = vkinder.get_user_info(couple_url['vk_id'])
                 favorit_name_link = f'{couple_url["name"]}\n' \
                                     f'{couple_url["link"]}\n'
@@ -74,7 +65,7 @@ def bot_valera():
                 candidat_list.append(couple_url['vk_id'])
                 for i in info_fav["photo_links"]:
                     attachment = f'photo{couple_url["vk_id"]}_{i}'
-                    send_some_ms(vk_user_id, 'favorit_name_link', keyboard_2, attachment)
+                    send_some_ms(vk_user_id, ' ', keyboard_2, attachment)
             elif msg == 'добавить в избранное':
                 candidate_vk_id = couple_url['vk_id']
                 candidate_info = vkinder.get_user_info(candidate_vk_id)
@@ -91,15 +82,13 @@ def bot_valera():
                          f'Продолжим ? '
                 send_some_ms(vk_user_id, answer, keyboard)
             elif msg == 'список избранного':
-                # тут используем метод бд с запросом к бд
-                get_user = dbmanager.GetUserByVkID(str(vk_user_id))
-                y = dbmanager.GetUserFavorites(get_user["user_id"])
+                y = dbmanager.GetUserFavoritesVkIDList(str(vk_user_id))
                 for i in y:
-                    f_u_vk_id = dbmanager.GetUserByID(i)
-                    answer = f'{f_u_vk_id["name"]}\nhttps://vk.com/id{f_u_vk_id["user_vk_id"]}'
-                    send_some_ms(vk_user_id, answer, keyboard)
+                    f_u_vk_id = dbmanager.GetUserByVkID(str(i))
+                    answe_2 = f'{f_u_vk_id["name"]}\nhttps://vk.com/id{f_u_vk_id["vk_id"]}'
+                    send_some_ms(vk_user_id, answe_2, keyboard)
             else:
                 send_some_ms(vk_user_id, 'Нажми старт что бы начать', keyboard_start)
 
 
-bot_valera()
+# bot_valera()
