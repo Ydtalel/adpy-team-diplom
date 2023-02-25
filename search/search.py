@@ -39,7 +39,7 @@ class Vkinder:
                 sex = 2
             else:
                 sex = 1
-            users_search = self.api.users.search(count=50, is_closed=0, sort=0, has_photo=1, status=6, sex=sex,
+            users_search = self.api.users.search(count=1000, is_closed=0, sort=0, has_photo=1, status=6, sex=sex,
                                                  age_from=age - 3, age_to=age + 3)
             self.candidate_list = [user['id'] for user in users_search['items'] if not user['is_closed']]
         return self.about_user_dict
@@ -63,7 +63,7 @@ class Vkinder:
 
     def users_search(self):
         next_user = random.choice(self.candidate_list)
-        chat_user_id = db_manager.GetUserByVkID(str(self.about_user_dict['vk_id']))['user_id']  # 2
+        chat_user_id = db_manager.GetUserByVkID(str(self.about_user_dict['vk_id']))['user_id']
         vk_id_list = db_manager.GetViewPastVkIDList(chat_user_id)
         for candidate in self.candidate_list:
             if str(candidate) not in vk_id_list:
