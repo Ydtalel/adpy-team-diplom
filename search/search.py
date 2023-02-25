@@ -1,29 +1,17 @@
-import vk
 from dotenv import load_dotenv
 import os
 import random
 from datetime import date
 from DBManager.DBManager import DBManager
 
-# import time
-# from Bot_Valera.conf import token_1
-
-# token = token_1
-
-
-# GetUserFavoritesVkIDList вернет di favorites
-# AddViewPastVkID     - это добавить вк айди в список пользователи по юзер айди
-# в список просмотренных
-# GetViewPastVkIDList получить списком просмотренные вк айди
-# GetUserByID и GetUserByVkID возвращают как вк айди так и юзер айди в бд
+db_manager = DBManager(db_name='vkinder', db_protocol="postgresql", user_name="postgres", user_password="yu14r06iy90",
+                       host="localhost", port="5432")
 
 ## это не удаляем
 load_dotenv()  # take environment variables from .env.
 token = os.getenv('token')
 bot_token = os.getenv('bot_token')
 bd_password = os.getenv('bd_password ')
-db_manager = DBManager(db_name='vkinder', db_protocol="postgresql", user_name="postgres", user_password=bd_password,
-                       host="localhost", port="5432")
 
 
 class Vkinder:
@@ -58,8 +46,7 @@ class Vkinder:
                 sex = 2
             else:
                 sex = 1
-
-            users_search = self.api.users.search(count=1000, is_closed=0, sort=0, has_photo=1, status=6, sex=sex,
+            users_search = self.api.users.search(count=50, is_closed=0, sort=0, has_photo=1, status=6, sex=sex,
                                                  age_from=age - 3, age_to=age + 3)
             self.candidate_list = [user['id'] for user in users_search['items'] if not user['is_closed']]
         return self.about_user_dict
@@ -82,28 +69,18 @@ class Vkinder:
         return [id_ for id_ in {k: v for k, v in sorted_tuples}.keys()]
 
     def users_search(self):
-
-        # user_id = db_manager.GetUserByVkID(str(self.about_user_dict['vk_id']))
-        # vk_id_list = db_manager.GetViewPastVkIDList(user_id['user_id'])
-
         next_user = random.choice(self.candidate_list)
+        chat_user_id = db_manager.GetUserByVkID(str(self.about_user_dict['vk_id']))['user_id']  # 2
+        vk_id_list = db_manager.GetViewPastVkIDList(chat_user_id)
+        for candidate in self.candidate_list:
+            if str(candidate) not in vk_id_list:
+                next_user = int(candidate)
+                break
+            else:
+                del self.candidate_list[self.candidate_list.index(candidate)]
         del self.candidate_list[self.candidate_list.index(next_user)]
-        # chat_user_id = db_manager.GetUserByVkID(str(self.about_user_dict['vk_id'])) # 2
-
-        # vk_id_list = db_manager.GetViewPastVkIDList(chat_user_id['user_id'])
-        # print(len(self.candidate_list))
-        # # next_user = self.candidate_list.pop(0)
-        # del self.candidate_list[self.candidate_list.index(next_user)]
-        #
-        # for candidate in self.candidate_list:
-        #     if candidate not in vk_id_list:
-        #         next_user = candidate
-        #         break
-        #     else:
-        #         del self.candidate_list[self.candidate_list.index(candidate)]
         user_info = self.api.users.get(user_ids=next_user, fields='id, first_name, last_name')
         photo_id = self._get_top3_photo(next_user)
-        # db_manager.AddViewPastVkID(chat_user_id, str(next_user))
         return {
             'name': f"{user_info[0]['first_name']} {user_info[0]['last_name']}",
             'link': f"https://vk.com/id{str(next_user)}",
@@ -118,11 +95,3 @@ class Vkinder:
             id_ = fav['id']
             fav_list[f"https://vk.com/id{id_}"] = f"{fav['first_name']} {fav['last_name']}"
         return fav_list
-
-# vkinder = Vkinder(vk.API(access_token=token, v=5.131))
-#
-# vkinder.get_user_info(397000519)
-# print(vkinder.users_search())
-
-# ls = ['71902612', '452461439', '184822954', '452565279']
-# print(vkinder.get_favorites(ls))
