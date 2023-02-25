@@ -1,20 +1,21 @@
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
-from conf import access_token, token_1
-# from search.search import token, bot_token
+# from conf import access_token, token_1
+from search.search import token, bot_token
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from DBManager.DBManager import DBManager
 from search.search import Vkinder
 import vk
 
-vk_session = vk_api.VkApi(token=tok)
-# vk_session = vk_api.VkApi(token=bot_token)
+# vk_session = vk_api.VkApi(token=tok)
+vk_session = vk_api.VkApi(token=bot_token)
 session_api = vk_session.get_api()
 longpoll = VkLongPoll(vk_session)
-dbmanager = DBManager("vkbot_db")
-# dbmanager = DBManager()
-vkinder = Vkinder(vk.API(access_token=token_1, v=5.131))
-# vkinder = Vkinder(vk.API(access_token=token, v=5.131))
+# dbmanager = DBManager("vkbot_db")
+dbmanager = DBManager(db_name='vkinder', db_protocol="postgresql", user_name="postgres",
+                      user_password="yu14r06iy90", host="localhost", port="5432")
+# vkinder = Vkinder(vk.API(access_token=token_1, v=5.131))
+vkinder = Vkinder(vk.API(access_token=token, v=5.131))
 
 
 def send_some_ms(vk_user_id, message_text, keyboard, attachment=None):
@@ -60,8 +61,13 @@ def bot_valera():
                              'Жми next и начнем!',
                              keyboard)
             elif msg == 'next':
-                # vkinder.get_user_info(vk_user_id)
+                vkinder.get_user_info(vk_user_id)
                 couple_url = vkinder.users_search()
+                chat_user_db_id = dbmanager.GetUserByVkID(str(vk_user_id))["user_id"]
+                # print(len(candidat_list), chat_user_db_id, str(couple_url['vk_id']))
+                if len(candidat_list) > 0:
+                    dbmanager.AddViewPastVkID(user_id=chat_user_db_id, past_vk_id=str(couple_url['vk_id']))
+
                 info_fav = vkinder.get_user_info(couple_url['vk_id'])
                 favorit_name_link = f'{couple_url["name"]}\n' \
                                     f'{couple_url["link"]}\n'
