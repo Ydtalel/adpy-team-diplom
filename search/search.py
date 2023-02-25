@@ -1,14 +1,11 @@
-import vk
 from dotenv import load_dotenv
 import os
 import random
 from datetime import date
+from DBManager.DBManager import DBManager
 
-# import time
-# from Bot_Valera.conf import token_1
-
-# token = token_1
-
+db_manager = DBManager(db_name='vkinder', db_protocol="postgresql", user_name="postgres", user_password="yu14r06iy90",
+                       host="localhost", port="5432")
 
 ## это не удаляем
 load_dotenv()  # take environment variables from .env.
@@ -18,12 +15,13 @@ bd_password = os.getenv('bd_password ')
 
 
 class Vkinder:
-    about_user_dict = {}
 
     def __init__(self, api):
+        self.about_user_dict = {}
         self.api = api
+        self.candidate_list = ['452461439']
 
-    def get_user_info(self, id_):
+    def get_user_info(self, id_, flag=False):
         user_info = self.api.users.get(user_ids=id_, fields='id, first_name, last_name, bdate, city, sex')
         try:
             age = int(date.today().year) - int(user_info[0]['bdate'].split('.')[2])
@@ -34,17 +32,23 @@ class Vkinder:
             city_id = user_info[0]['city']['id']
         except KeyError:
             city_id = 1
-        fname = user_info[0]['first_name']
-        lname = user_info[0]['last_name']
-        photo_id = self._get_top3_photo(id_)
-        Vkinder.about_user_dict = {
+
+        self.about_user_dict = {
             'vk_id': id_,
-            'name': f"{fname} {lname}",
+            'name': f"{user_info[0]['first_name']} {user_info[0]['last_name']}",
             'age': age,
             'sex': sex,
             'city': city_id,
-            'photo_links': photo_id
+            'photo_links': self._get_top3_photo(id_)
         }
+        if flag:
+            if sex == 1:
+                sex = 2
+            else:
+                sex = 1
+            users_search = self.api.users.search(count=50, is_closed=0, sort=0, has_photo=1, status=6, sex=sex,
+                                                 age_from=age - 3, age_to=age + 3)
+            self.candidate_list = [user['id'] for user in users_search['items'] if not user['is_closed']]
         return self.about_user_dict
 
     @staticmethod
@@ -65,27 +69,23 @@ class Vkinder:
         return [id_ for id_ in {k: v for k, v in sorted_tuples}.keys()]
 
     def users_search(self):
-        params = self.about_user_dict.copy()
-        if params['sex'] == 1:
-            params['sex'] = 2
-        else:
-            params['sex'] = 1
-        del params['vk_id']
-        del params['name']
-        users_age = params.pop('age')
-        params['age_from'] = users_age - 3
-        params['age_to'] = users_age + 3
-        # sort -0 популярность //  sort-1 новые // count максимум 1000
-        users_search = self.api.users.search(**params, count=1000, is_closed=0, sort=0, has_photo=1, status=6)
-        id_list = [user['id'] for user in users_search['items'] if not user['is_closed']]
-        rand_user = random.choice(id_list)
-        user_info = self.api.users.get(user_ids=rand_user, fields='id, first_name, last_name')
-        photo_id = self._get_top3_photo(rand_user)
+        next_user = random.choice(self.candidate_list)
+        chat_user_id = db_manager.GetUserByVkID(str(self.about_user_dict['vk_id']))['user_id']  # 2
+        vk_id_list = db_manager.GetViewPastVkIDList(chat_user_id)
+        for candidate in self.candidate_list:
+            if str(candidate) not in vk_id_list:
+                next_user = int(candidate)
+                break
+            else:
+                del self.candidate_list[self.candidate_list.index(candidate)]
+        del self.candidate_list[self.candidate_list.index(next_user)]
+        user_info = self.api.users.get(user_ids=next_user, fields='id, first_name, last_name')
+        photo_id = self._get_top3_photo(next_user)
         return {
             'name': f"{user_info[0]['first_name']} {user_info[0]['last_name']}",
-            'link': f"https://vk.com/id{str(rand_user)}",
+            'link': f"https://vk.com/id{str(next_user)}",
             'photo': photo_id,
-            'vk_id': rand_user
+            'vk_id': next_user
         }
 
     def get_favorites(self, favorits_vk_id):
@@ -95,11 +95,3 @@ class Vkinder:
             id_ = fav['id']
             fav_list[f"https://vk.com/id{id_}"] = f"{fav['first_name']} {fav['last_name']}"
         return fav_list
-
-
-vkinder = Vkinder(vk.API(access_token=token, v=5.131))
-
-# vkinder.get_user_info(397000519)
-# print(vkinder.users_search())
-# ls = ['71902612', '452461439', '184822954', '452565279']
-# print(vkinder.get_favorites(ls))
