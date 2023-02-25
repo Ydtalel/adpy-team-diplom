@@ -1,17 +1,17 @@
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
-# from conf import access_token, token_1
+from conf import access_token, token_1, tok
 from search.search import token, bot_token
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from DBManager.DBManager import DBManager
 from search.search import Vkinder
 import vk
 
-# vk_session = vk_api.VkApi(token=tok)
-vk_session = vk_api.VkApi(token=bot_token)
+vk_session = vk_api.VkApi(token=tok)
+#vk_session = vk_api.VkApi(token=bot_token)
 session_api = vk_session.get_api()
 longpoll = VkLongPoll(vk_session)
-# dbmanager = DBManager("vkbot_db")
+dbmanager = DBManager("vkbot_db")
 
 # vkinder = Vkinder(vk.API(access_token=token_1, v=5.131))
 vkinder = Vkinder(vk.API(access_token=token, v=5.131))
@@ -105,4 +105,4 @@ def bot_valera():
                 send_some_ms(vk_user_id, 'Нажми старт что бы начать', keyboard_start)
 
 
-#bot_valera()
+bot_valera()
