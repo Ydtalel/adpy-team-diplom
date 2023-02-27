@@ -1,7 +1,6 @@
 import sqlalchemy as sa
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
-# from DBManager.DeclarativeBase import DeclarativeBase
 from DBManager.DeclarativeBase import DeclarativeBase
 from DBManager.TableClasses.Users import User
 from DBManager.TableClasses.Favorites import Favorite
