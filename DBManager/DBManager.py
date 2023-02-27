@@ -17,7 +17,7 @@ class DBManager:
         DeclarativeBase.Base.metadata.create_all(self.__engine)
         self._session = sessionmaker(bind=self.__engine)()
 
-    def add_user(self, vk_id: str, name: str, age: int, gender: int, city: int) -> bool:
+    def add_user(self, user_info : dict) -> bool:
         """Adding user to database. All parameters are obligatory\n
         Parameters:\n
         Vk_id is a short string\n
@@ -26,11 +26,11 @@ class DBManager:
         Gender is Male = 1, Female = 0\n
         City is INTEGER\n
         Return True if added successfull otherwise false.\n"""
-        if age < 1: return False
-        x_ret = self._session.query(User).where(User.user_vk_id == vk_id)
-        if len(x_ret.all()) > 0:
-            return False
-        self._session.add(User(user_vk_id=vk_id, name=name, age=age, gender=gender, city=city))
+        if not user_info['vk_id'] or not user_info['name'] or not int(user_info['age']) or not int(user_info['gender']) or not user_info['city']: return False
+        if int(user_info['age']) < 1: return False
+        x_ret = self._session.query(User).where(User.user_vk_id == user_info['vk_id'])
+        if len(x_ret.all()) > 0: return False
+        self._session.add(User(user_vk_id=user_info['vk_id'], name=user_info['name'], age=user_info['age'], gender=user_info['gender'], city=user_info['city']))
         self._session.commit()
         return True
 

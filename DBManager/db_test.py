@@ -6,7 +6,8 @@ def DbTest():
 
     db = DBManager(db_name="vkbot_db", user_name="postgres", user_password="111")
 
-    x = db.add_user(vk_id="eezz" + str(randrange(100)), name="vasya", age=23, gender=1, city=1)
+
+    x = db.add_user( { "vk_id" + str(randrange(100)) : "eezz", "name" : "vasya", "age" : "23", "gender" : 1, "city" : 1 } )
     print("AddUser", x)
 
     x = db.get_user_by_id(1)
