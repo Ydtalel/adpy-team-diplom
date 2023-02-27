@@ -6,24 +6,24 @@ def DbTest():
 
     db = DBManager(db_name="vkbot_db", user_name="postgres", user_password="111")
 
-    x = db.AddUser(vk_id="eezz" + str(randrange(100)), name="vasya", age=23, gender=1, city=1)
+    x = db.add_user(vk_id="eezz" + str(randrange(100)), name="vasya", age=23, gender=1, city=1)
     print("AddUser", x)
 
-    x = db.GetUserByID(1)
+    x = db.get_user_by_id(1)
     print("GetUserByID", x)
-    x = db.GetUserByVkID("eezz11")
+    x = db.get_user_by_vk_id("eezz11")
     print("GetUserByVkID", x)
 
-    x = db.AddUserFavorites(1, 3)
+    x = db.add_user_favorites(1, 3)
     print("AddUserFavorites", x)
-    x = db.AddUserFavorites(1, 4)
+    x = db.add_user_favorites(1, 4)
     print("AddUserFavorites", x)
 
-    x = db.GetUserFavoritesVkIDList("eezz12")
+    x = db.get_user_favorites_vk_id_list("eezz12")
     print("GetUserFavorites", x)
 
-    x = db.AddViewPastVkID(1, "Pstvk_id2")
+    x = db.add_view_past_vk_id(1, "Pstvk_id2")
     print("AddViewPastVkID", x)
 
-    x = db.GetViewPastVkIDList(1)
+    x = db.get_view_past_vk_id_list(1)
     print(x)
