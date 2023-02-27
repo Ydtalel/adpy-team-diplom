@@ -1,5 +1,4 @@
-#from Bot_Valera.Bot_Valera import bot_valera
-from DBManager.db_test import *
+from Bot_Valera.Bot_Valera import bot_valera
 
 # Перед началом использования зайдите в файл configurations измените значение переменных:
 #   access_token = Ваш токен от ВК
@@ -8,5 +7,5 @@ from DBManager.db_test import *
 #   База данных будет называться -  "vkbot_db"
 
 if __name__ == "__main__":
-    DbTest()
+    bot_valera()
         
