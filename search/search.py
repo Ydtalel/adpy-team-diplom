@@ -10,15 +10,15 @@ class Vkinder:
 
     def get_user_info(self, id_, flag=False):
         user_info = self.api.users.get(user_ids=id_, fields='id, first_name, last_name, bdate, city, sex')
-        try:
+        if len(user_info[0]['bdate']) > 5:
             age = int(date.today().year) - int(user_info[0]['bdate'].split('.')[2])
-        except IndexError:
+        else:
             age = 25
-        sex = user_info[0]['sex']
-        try:
+        if 'city' in user_info[0]:
             city_id = user_info[0]['city']['id']
-        except KeyError:
+        else:
             city_id = 1
+        sex = user_info[0]['sex']
 
         self.about_user_dict = {
             'vk_id': str(id_),
