@@ -1,11 +1,5 @@
 import random
 from datetime import date
-from DBManager.DBManager import DBManager
-from Bot_Valera.configurations import token_group, access_token, Db_password
-
-
-db_manager = DBManager("vkbot_db", 'postgres', Db_password)
-
 
 class Vkinder:
 
@@ -27,7 +21,7 @@ class Vkinder:
             city_id = 1
 
         self.about_user_dict = {
-            'vk_id': id_,
+            'vk_id': str(id_),
             'name': f"{user_info[0]['first_name']} {user_info[0]['last_name']}",
             'age': age,
             'sex': sex,
@@ -63,14 +57,6 @@ class Vkinder:
 
     def users_search(self):
         next_user = random.choice(self.candidate_list)
-        chat_user_id = db_manager.GetUserByVkID(str(self.about_user_dict['vk_id']))['user_id']
-        vk_id_list = db_manager.GetViewPastVkIDList(chat_user_id)
-        for candidate in self.candidate_list:
-            if str(candidate) not in vk_id_list:
-                next_user = int(candidate)
-                break
-            else:
-                del self.candidate_list[self.candidate_list.index(candidate)]
         del self.candidate_list[self.candidate_list.index(next_user)]
         user_info = self.api.users.get(user_ids=next_user, fields='id, first_name, last_name')
         photo_id = self._get_top3_photo(next_user)
