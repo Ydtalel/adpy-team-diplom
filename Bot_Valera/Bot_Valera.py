@@ -36,6 +36,7 @@ def send_some_ms(vk_user_id, message_text, keyboardd, attachment=None):
 
 def bot_valera():
     candidat_list = []
+    couple_url_list = []
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
             msg = event.text.lower()
@@ -50,6 +51,7 @@ def bot_valera():
             elif msg == 'next':
                 vkinder.get_user_info(vk_user_id)
                 couple_url = vkinder.users_search()
+                couple_url_list.append(couple_url['vk_id'])
                 check()
                 chat_user_db_id = dbmanager.get_user_by_vk_id(str(vk_user_id))["user_id"]
                 dbmanager.add_view_past_vk_id(user_id=chat_user_db_id, past_vk_id=str(couple_url['vk_id']))
@@ -58,19 +60,11 @@ def bot_valera():
                                     f'{couple_url["link"]}\n'
                 send_some_ms(vk_user_id, favorit_name_link, keyboard_2)
                 candidat_list.append(couple_url['vk_id'])
-                if len(info_fav["photo_links"]) == 3:
-                    attachment = f'photo{couple_url["vk_id"]}_{info_fav["photo_links"][0]},' \
-                                 f'photo{couple_url["vk_id"]}_{info_fav["photo_links"][1]},' \
-                                 f'photo{couple_url["vk_id"]}_{info_fav["photo_links"][2]}'
-                elif len(info_fav["photo_links"]) == 2:
-                    attachment = f'photo{couple_url["vk_id"]}_{info_fav["photo_links"][0]},' \
-                                 f'photo{couple_url["vk_id"]}_{info_fav["photo_links"][1]},'
-                else:
-                    attachment = f'photo{couple_url["vk_id"]}_{info_fav["photo_links"][0]},'
-
+                info_fav_join = f',photo{couple_url["vk_id"]}_'.join(info_fav["photo_links"])
+                attachment = f'photo{couple_url["vk_id"]}_{info_fav_join}'
                 send_some_ms(vk_user_id, ' ', keyboard_2, attachment)
             elif msg == 'добавить в избранное':
-                candidate_vk_id = couple_url['vk_id']
+                candidate_vk_id = couple_url_list.pop()
                 candidate_info = vkinder.get_user_info(candidate_vk_id)
                 dbmanager.add_user(candidate_info)
                 candidate_db = dbmanager.get_user_by_vk_id(str(candidate_vk_id))
